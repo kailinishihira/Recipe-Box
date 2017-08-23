@@ -11,7 +11,7 @@ namespace RecipeBox.Models
     private string _instructions;
     private int _rating;
 
-    public Student(string name, string instructions, int rating = 0, int id = 0)
+    public Recipe(string name, string instructions, int rating = 0, int id = 0)
     {
       _name = name;
       _instructions = instructions;
@@ -24,7 +24,7 @@ namespace RecipeBox.Models
       return _id;
     }
 
-    public string GetRating()
+    public int GetRating()
     {
       return _rating;
     }
@@ -79,7 +79,7 @@ namespace RecipeBox.Models
        int recipeId = rdr.GetInt32(0);
        string name = rdr.GetString(1);
        string instructions = rdr.GetString(2);
-       int rating = rdr.GetString(3);
+       int rating = rdr.GetInt32(3);
 
        Recipe newRecipe = new Recipe(name, instructions, rating, recipeId);
        recipeList.Add(newRecipe);
@@ -94,7 +94,7 @@ namespace RecipeBox.Models
       conn.Open();
 
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"INSERT INTO recipes (name, instructions) VALUES (@name, @instructions);";
+      cmd.CommandText = @"INSERT INTO recipes (name, instructions, rating) VALUES (@name, @instructions, @rating);";
 
       MySqlParameter name = new MySqlParameter();
       name.ParameterName = "@name";
@@ -105,6 +105,11 @@ namespace RecipeBox.Models
       instructions.ParameterName = "@instructions";
       instructions.Value = this._instructions;
       cmd.Parameters.Add(instructions);
+
+      MySqlParameter rating = new MySqlParameter();
+      rating.ParameterName = "@rating";
+      rating.Value = this._rating;
+      cmd.Parameters.Add(rating);
 
       cmd.ExecuteNonQuery();
       _id = (int) cmd.LastInsertedId;
@@ -139,18 +144,18 @@ namespace RecipeBox.Models
         recipeRating = rdr.GetInt32(3);
 
       }
-      Recipe foundRecipe = new Recipe(recipeName, recipeName, recipeInstructions, recipeId);
+      Recipe foundRecipe = new Recipe(recipeName, recipeInstructions, recipeRating, recipeId);
       conn.Close();
       return foundRecipe;
     }
 
-    public void Update(string newName)
+    public void UpdateName(string newName)
     {
       MySqlConnection conn = DB.Connection();
       conn.Open();
 
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"UPDATE students SET name = @newName WHERE id = @thisId;";
+      cmd.CommandText = @"UPDATE recipes SET name = @newName WHERE id = @thisId;";
 
       MySqlParameter searchId = new MySqlParameter();
       searchId.ParameterName = "@thisId";
@@ -167,13 +172,36 @@ namespace RecipeBox.Models
       _name = newName;
     }
 
+    public void UpdateInstructions(string newInstructions)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"UPDATE recipes SET instructions = @newInstructions WHERE id = @thisId;";
+
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@thisId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
+
+      MySqlParameter instructions = new MySqlParameter();
+      instructions.ParameterName = "@newInstructions";
+      instructions.Value = newInstructions;
+      cmd.Parameters.Add(instructions);
+
+      cmd.ExecuteNonQuery();
+      conn.Close();
+      _instructions = newInstructions;
+    }
+
     public void Delete()
     {
       MySqlConnection conn = DB.Connection();
       conn.Open();
 
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"DELETE FROM students WHERE id = @thisId;";
+      cmd.CommandText = @"DELETE FROM recipes WHERE id = @thisId;";
 
       MySqlParameter searchId = new MySqlParameter();
       searchId.ParameterName = "@thisId";
@@ -189,27 +217,27 @@ namespace RecipeBox.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"DELETE FROM students;";
+      cmd.CommandText = @"DELETE FROM recipes;";
       cmd.ExecuteNonQuery();
       conn.Close();
     }
 
-    public void AddCourseToJoinTable(Course newCourse)
+    public void AddCategoryToJoinTable(Category newCategory)
     {
       MySqlConnection conn = DB.Connection();
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"INSERT INTO students_courses (student_id, course_id) VALUES (@StudentId, @CourseId);";
+      cmd.CommandText = @"INSERT INTO categories_recipes (recipe_id, category_id) VALUES (@RecipeId, @CategoryId);";
 
-      MySqlParameter course_id_param = new MySqlParameter();
-      course_id_param.ParameterName = "@CourseId";
-      course_id_param.Value = newCourse.GetId();
-      cmd.Parameters.Add(course_id_param);
+      MySqlParameter category_id_param = new MySqlParameter();
+      category_id_param.ParameterName = "@CategoryId";
+      category_id_param.Value = newCategory.GetId();
+      cmd.Parameters.Add(category_id_param);
 
-      MySqlParameter student_id_param = new MySqlParameter();
-      student_id_param.ParameterName = "@StudentId";
-      student_id_param.Value = _id;
-      cmd.Parameters.Add(student_id_param);
+      MySqlParameter recipe_id_param = new MySqlParameter();
+      recipe_id_param.ParameterName = "@RecipeId";
+      recipe_id_param.Value = _id;
+      cmd.Parameters.Add(recipe_id_param);
 
       cmd.ExecuteNonQuery();
       conn.Close();
@@ -219,39 +247,99 @@ namespace RecipeBox.Models
       }
     }
 
-    public List<Course> GetCourses()
+    public List<Category> GetCategories()
     {
         MySqlConnection conn = DB.Connection();
         conn.Open();
-        var cmd = conn.CreateCommand() as MySqlCommand;
-        cmd.CommandText = @"SELECT courses.* FROM students
-          JOIN students_courses ON (students.id = students_courses.student_id)
-          JOIN courses ON (courses.id = students_courses.course_id)
-          WHERE students.id = @StudentId;";
 
-        MySqlParameter studentIdParameter = new MySqlParameter();
-        studentIdParameter.ParameterName = "@StudentId";
-        studentIdParameter.Value = _id;
-        cmd.Parameters.Add(studentIdParameter);
+        var cmd = conn.CreateCommand() as MySqlCommand;
+        cmd.CommandText = @"SELECT categories.* FROM recipes
+          JOIN categories_recipes ON (recipes.id = categories_recipes.recipe_id)
+          JOIN categories ON (categories.id = categories_recipes.category_id)
+          WHERE recipes.id = @RecipeId;";
+
+        MySqlParameter recipeIdParameter = new MySqlParameter();
+        recipeIdParameter.ParameterName = "@RecipeId";
+        recipeIdParameter.Value = _id;
+        cmd.Parameters.Add(recipeIdParameter);
 
         var rdr = cmd.ExecuteReader() as MySqlDataReader;
-        List<Course> courses = new List<Course>{};
+        List<Category> categories = new List<Category>{};
 
         while(rdr.Read())
         {
-          int courseId = rdr.GetInt32(0);
-          string courseName = rdr.GetString(1);
-          string courseNumber = rdr.GetString(2);
-          Course newCourse = new Course(courseName, courseNumber, courseId);
-          courses.Add(newCourse);
+          int categoryId = rdr.GetInt32(0);
+          string categoryName = rdr.GetString(1);
+
+          Category newCategory = new Category(categoryName, categoryId);
+          categories.Add(newCategory);
         }
         conn.Close();
         if (conn != null)
         {
             conn.Dispose();
         }
-        return courses;
+        return categories;
     }
 
+    public void AddIngredientToJoinTable(Ingredient newIngredient)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"INSERT INTO ingredients_recipes (ingredient_id, recipe_id) VALUES (@IngredientId, @RecipeId);";
+
+      MySqlParameter ingredient_id_param = new MySqlParameter();
+      ingredient_id_param.ParameterName = "@IngredientId";
+      ingredient_id_param.Value = newIngredient.GetId();
+      cmd.Parameters.Add(ingredient_id_param);
+
+      MySqlParameter recipe_id_param = new MySqlParameter();
+      recipe_id_param.ParameterName = "@RecipeId";
+      recipe_id_param.Value = _id;
+      cmd.Parameters.Add(recipe_id_param);
+
+      cmd.ExecuteNonQuery();
+      conn.Close();
+      if (conn != null)
+      {
+        conn.Dispose();
+      }
+    }
+
+    public List<Ingredient> GetIngredients()
+    {
+        MySqlConnection conn = DB.Connection();
+        conn.Open();
+
+        var cmd = conn.CreateCommand() as MySqlCommand;
+        cmd.CommandText = @"SELECT ingredients.* FROM recipes
+          JOIN ingredients_recipes ON (recipes.id = ingredients_recipes.recipe_id)
+          JOIN ingredients ON (ingredients.id = ingredients_recipes.ingredient_id)
+          WHERE recipes.id = @RecipeId;";
+
+        MySqlParameter recipeIdParameter = new MySqlParameter();
+        recipeIdParameter.ParameterName = "@RecipeId";
+        recipeIdParameter.Value = _id;
+        cmd.Parameters.Add(recipeIdParameter);
+
+        var rdr = cmd.ExecuteReader() as MySqlDataReader;
+        List<Ingredient> ingredients = new List<Ingredient>{};
+
+        while(rdr.Read())
+        {
+          int ingredientId = rdr.GetInt32(0);
+          string ingredientName = rdr.GetString(1);
+
+          Ingredient newIngredient = new Ingredient(ingredientName, ingredientId);
+          ingredients.Add(newIngredient);
+        }
+        conn.Close();
+        if (conn != null)
+        {
+            conn.Dispose();
+        }
+        return ingredients;
+    }
   }
 }

@@ -175,7 +175,7 @@ namespace RecipeBox.Models
       MySqlConnection conn = DB.Connection();
       conn.Open();
       var cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"INSERT INTO recipes_categories (recipe_id, category_id) VALUES (@RecipeId, @CategoryId);";
+      cmd.CommandText = @"INSERT INTO categories_recipes (recipe_id, category_id) VALUES (@RecipeId, @CategoryId);";
 
       MySqlParameter recipe_id_param = new MySqlParameter();
       recipe_id_param.ParameterName = "@RecipeId";
@@ -203,7 +203,7 @@ namespace RecipeBox.Models
      cmd.CommandText = @"SELECT recipes.*
        FROM categories
        JOIN categories_recipes ON(categories.id = categories_recipes.category_id)
-       JOIN recipes(recipes.id = categories_recipes.recipe_id)
+       JOIN recipes ON(recipes.id = categories_recipes.recipe_id)
        WHERE category_id = @categoryId;";
 
      MySqlParameter categoryIdParameter = new MySqlParameter();
