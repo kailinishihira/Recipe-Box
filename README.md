@@ -24,6 +24,8 @@ _This web app will allow a hair salon owner to add a list of stylist, and for ea
 
 ![](/schema.png)
 
+![](/ui.JPG)
+
 ### Technical Specs
 
 | App Behavior | Expected | Actual |

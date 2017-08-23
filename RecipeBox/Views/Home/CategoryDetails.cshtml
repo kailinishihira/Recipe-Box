@@ -1,0 +1,27 @@
+@{
+  Layout = "_Layout";
+}
+
+<h1>@Model["selectedCategory"].GetName() Recipes</h1>
+
+@foreach(var recipe in @Model["categoryRecipe"])
+{
+  <ul>
+  <li><a href='/category/@Model["selectedCategory"]GetId()/recipe/@recipe.GetId()'>@recipe.GetName()</a></li>
+  </ul>
+}
+
+<a href ="/recipe-form" class="btn btn-info">Add Recipe</a>
+
+<h4>Add a recipe to this category:</h4>
+<form action='/category/add_recipe' method='post'>
+  <input id='category-id' name='category-id' type='hidden' value='@Model["selectedCategory"].GetId()'>
+  <label for='recipe-id'>Select a recipe</label>
+  <select id='recipe-id' name='recipe-id' type='text'>
+    @foreach (var recipe in @Model["allRecipes"])
+    {
+      <option value='@recipe.GetId()'>@recipe.GetName()</option>
+    }
+  </select>
+  <button type='submit'>Add</button>
+</form>
