@@ -57,7 +57,7 @@ namespace RecipeBox.Models
      conn.Open();
 
      var cmd = conn.CreateCommand() as MySqlCommand;
-     cmd.CommandText = @"SELECT * FROM ingredients;";
+     cmd.CommandText = @"SELECT * FROM ingredients ORDER BY name ASC;";
 
      var rdr = cmd.ExecuteReader() as MySqlDataReader;
      while(rdr.Read())

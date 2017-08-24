@@ -377,6 +377,14 @@ namespace RecipeBox.Controllers
       return View("RecipeDetails", model);
     }
 
+    [HttpGet("/ingredients/{id}/delete")]
+    public ActionResult DeleteIngredientFromList(int id)
+    {
+      Ingredient thisIngredient = Ingredient.Find(id);
+      thisIngredient.Delete();
+      List<Ingredient> allIngredients = Ingredient.GetAll();
+      return View("IngredientsList", allIngredients);
+    }
     // [HttpPost ("/category-added")]
     // public ActionResult AddCategory(int id)
     // {

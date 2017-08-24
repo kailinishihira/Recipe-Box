@@ -2,11 +2,13 @@
   Layout = "_Layout";
 }
 
+<a href ="/" class="btn btn-info">Home</a>
+
 <h2>Ingredients</h2>
 
 @foreach(var ingredient in Model)
 {
   <ul>
-    <li><a href="/">@ingredient.GetName()</a></li>
+    <li><a href="/">@ingredient.GetName()</a> <a href="/ingredients/@ingredient.GetId()/delete">(x)</a></li>
   </ul>
 }
