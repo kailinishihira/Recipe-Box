@@ -17,7 +17,7 @@ namespace RecipeBox.Tests
 
     public RecipeTests()
     {
-      DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=3306;database=recipe_box_test;";
+      DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=recipe_box_test;";
     }
 
     [TestMethod]
@@ -198,6 +198,30 @@ namespace RecipeBox.Tests
 
       //Assert
       CollectionAssert.AreEqual(testList, result);
+    }
+
+    [TestMethod]
+    public void DeleteCategoryFromRecipe()
+    {
+      Recipe testRecipe = new Recipe("Chocolate Chip Cookies", "Melt butter, mix with sugar, eggs, flour, salt, baking soda, chocolate chips. Bake for 10 minutes", 4);
+      testRecipe.Save();
+
+      Category testCategory1 = new Category("Dessert");
+      testCategory1.Save();
+
+      Category testCategory2 = new Category("Baking");
+      testCategory2.Save();
+
+      testRecipe.AddCategoryToJoinTable(testCategory1);
+      testRecipe.AddCategoryToJoinTable(testCategory2);
+
+      testRecipe.DeleteCategoryFromRecipe(testCategory1);
+
+      List<Category> expectedList = new List<Category> {testCategory2};
+      List<Category> actualList = testRecipe.GetCategories();
+
+      CollectionAssert.AreEqual(expectedList, actualList);
+
     }
   }
 }

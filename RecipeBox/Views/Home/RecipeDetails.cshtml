@@ -5,15 +5,15 @@
 <a href ="/" class="btn btn-info">Home</a>
 
 <h2>@Model["thisRecipe"].GetName()</h2>
-<p><a href="/recipe/@Model["thisRecipe"].GetId()/delete">Delete recipe</a></p>
-
+<p><a href='/recipe/@Model["thisRecipe"].GetId()/delete'>Delete recipe</a></p>
+<p><a href='/recipe/@Model["thisRecipe"].GetId()/update-form'>Update recipe</a></p>
 <div class="row">
   <div class="col-md-6">
     <h4>Categories: </h4>
     @foreach (var category in @Model["categoriesRecipes"])
     {
       <ul>
-        <li><a href="/categories/@category.GetId()">@category.GetName()</a></li>
+        <li><a href="/categories/@category.GetId()">@category.GetName()</a>  <a href='/recipe/@Model["thisRecipe"].GetId()/category/@category.GetId()/deleted'>(x)</a> </li>
       </ul>
     }
   </div>
@@ -47,7 +47,7 @@
     @foreach (var ingredient in @Model["ingredientsRecipes"])
     {
       <ul>
-        <li>@ingredient.GetName()</li>
+        <li>@ingredient.GetName()  <a href="/recipe/@Model["thisRecipe"].GetId()/ingredient/@ingredient.GetId()/update-form">update</a>  <a href="/recipe/@Model["thisRecipe"].GetId()/ingredient/@ingredient.GetId()/deleted">(x)</a></li>
       </ul>
     }
   </div>

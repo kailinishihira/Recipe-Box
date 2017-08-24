@@ -235,6 +235,50 @@ namespace RecipeBox.Models
       conn.Close();
     }
 
+    public void DeleteCategoryFromRecipe(Category newCategory)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"DELETE FROM categories_recipes WHERE recipe_id = @RecipeId AND category_id = @CategoryId;";
+
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@RecipeId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
+
+      MySqlParameter category_id_param = new MySqlParameter();
+      category_id_param.ParameterName = "@CategoryId";
+      category_id_param.Value = newCategory.GetId();
+      cmd.Parameters.Add(category_id_param);
+
+      cmd.ExecuteNonQuery();
+      conn.Close();
+    }
+
+    public void DeleteIngredientFromRecipe(Ingredient newIngredient)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"DELETE FROM ingredients_recipes WHERE recipe_id = @RecipeId AND ingredient_id = @IngredientId;";
+
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@RecipeId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
+
+      MySqlParameter ingredient_id_param = new MySqlParameter();
+      ingredient_id_param.ParameterName = "@IngredientId";
+      ingredient_id_param.Value = newIngredient.GetId();
+      cmd.Parameters.Add(ingredient_id_param);
+
+      cmd.ExecuteNonQuery();
+      conn.Close();
+    }
+
     public static void DeleteAll()
     {
       MySqlConnection conn = DB.Connection();

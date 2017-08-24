@@ -20,11 +20,11 @@ namespace RecipeBox.Controllers
       return View();
     }
 
-    [HttpGet("/recipe-form")]
-    public ActionResult RecipeForm()
-    {
-      return View("RecipeForm");
-    }
+    // [HttpGet("/recipe-form")]
+    // public ActionResult RecipeForm()
+    // {
+    //   return View("RecipeForm");
+    // }
 
 
     [HttpPost("/category-added")]
@@ -37,18 +37,6 @@ namespace RecipeBox.Controllers
 
       List<Category> allCategories = Category.GetAll();
       return View("Index", allCategories);
-    }
-
-    [HttpPost("/category/{id}/recipe/add")]
-    public ActionResult AddRecipe(int id)
-    {
-      string recipeName = Request.Form["recipe-name"];
-      string instructions = Request.Form["instructions"];
-      Category thisCategory = Category.Find(id);
-      Recipe newRecipe = new Recipe(recipeName, instructions);
-      newRecipe.Save();
-      List<Recipe> allRecipes = Recipe.GetAll();
-      return View("AllRecipes", allRecipes);
     }
 
     [HttpGet("/recipes/all")]
@@ -79,7 +67,39 @@ namespace RecipeBox.Controllers
     {
       string ingredient = Request.Form["ingredient"];
       Ingredient newIngredient = new Ingredient(ingredient);
+      Recipe thisRecipe = Recipe.Find(id);
       newIngredient.Save();
+      thisRecipe.AddIngredientToJoinTable(newIngredient);
+
+      Dictionary<string, object> model = new Dictionary<string, object>();
+      List<Category> allCategories = Category.GetAll();
+      List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
+      List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      model.Add("thisRecipe", thisRecipe);
+      model.Add("allCategories", allCategories);
+      model.Add("ingredientsRecipes", ingredientsRecipes);
+      model.Add("categoriesRecipes", categoriesRecipes);
+      return View("RecipeDetails", model);
+    }
+    [HttpGet("/recipe/{id}/ingredient/{id2}/update-form")]
+    public ActionResult IngredientUpdateForm(int id, int id2)
+    {
+      Recipe thisRecipe = Recipe.Find(id);
+      Ingredient thisIngredient = Ingredient.Find(id2);
+
+      var model = new Dictionary<string,object> {};
+      model.Add("recipe", thisRecipe);
+      model.Add("ingredient", thisIngredient);
+
+
+      return View(model);
+    }
+
+    [HttpPost("/recipe/{id}/ingredient/{id2}/updated")]
+    public ActionResult IngredientNameUpdated(int id, int id2)
+    {
+      Ingredient selectedIngredient = Ingredient.Find(id2);
+      selectedIngredient.Update(Request.Form["new-ingredient-name"]);
 
       Dictionary<string, object> model = new Dictionary<string, object>();
       Recipe thisRecipe = Recipe.Find(id);
@@ -90,6 +110,26 @@ namespace RecipeBox.Controllers
       model.Add("allCategories", allCategories);
       model.Add("ingredientsRecipes", ingredientsRecipes);
       model.Add("categoriesRecipes", categoriesRecipes);
+      return View("RecipeDetails", model);
+    }
+
+
+    [HttpGet("/recipe/{id}/ingredient/{id2}/deleted")]
+    public ActionResult DeleteAnIngredientFromRecipe(int id, int id2)
+    {
+      Dictionary<string, object> model = new Dictionary<string, object>();
+      Recipe thisRecipe = Recipe.Find(id);
+      Ingredient thisIngredient = Ingredient.Find(id2);
+      thisRecipe.DeleteIngredientFromRecipe(thisIngredient);
+      List<Category> allCategories = Category.GetAll();
+      List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
+      List<Category> categoriesRecipes = thisRecipe.GetCategories();
+
+      model.Add("thisRecipe", thisRecipe);
+      model.Add("allCategories", allCategories);
+      model.Add("ingredientsRecipes", ingredientsRecipes);
+      model.Add("categoriesRecipes", categoriesRecipes);
+
       return View("RecipeDetails", model);
     }
 
@@ -114,6 +154,25 @@ namespace RecipeBox.Controllers
         return View("RecipeDetails", model);
       }
 
+      [HttpGet("/recipe/{id}/category/{id2}/deleted")]
+      public ActionResult DeleteACategoryFromRecipe(int id, int id2)
+      {
+        Dictionary<string, object> model = new Dictionary<string, object>();
+        Recipe thisRecipe = Recipe.Find(id);
+        Category thisCategory = Category.Find(id2);
+        thisRecipe.DeleteCategoryFromRecipe(thisCategory);
+        List<Category> allCategories = Category.GetAll();
+        List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
+        List<Category> categoriesRecipes = thisRecipe.GetCategories();
+
+        model.Add("thisRecipe", thisRecipe);
+        model.Add("allCategories", allCategories);
+        model.Add("ingredientsRecipes", ingredientsRecipes);
+        model.Add("categoriesRecipes", categoriesRecipes);
+
+        return View("RecipeDetails", model);
+      }
+
     [HttpGet("/categories/{id}")]
     public ActionResult CategoryDetails(int id)
     {
@@ -125,6 +184,30 @@ namespace RecipeBox.Controllers
       model.Add("categoriesRecipes", categoriesRecipes);
       model.Add("allRecipes", allRecipes);
       return View(model);
+    }
+
+    [HttpGet("/category/{id}/update-form")]
+    public ActionResult CategoryUpdateForm(int id)
+    {
+      Category thisCategory = Category.Find(id);
+
+      return View(thisCategory);
+    }
+
+    [HttpPost("/category/{id}/updated")]
+    public ActionResult CategoryUpdated(int id)
+    {
+
+      Dictionary<string, object> model = new Dictionary<string, object>();
+      Category selectedCategory = Category.Find(id);
+      selectedCategory.Update(Request.Form["new-category-name"]);
+      List<Recipe> categoriesRecipes = selectedCategory.GetRecipes();
+      List<Recipe> allRecipes = Recipe.GetAll();
+      model.Add("selectedCategory", selectedCategory);
+      model.Add("categoriesRecipes", categoriesRecipes);
+      model.Add("allRecipes", allRecipes);
+
+      return View("CategoryDetails", model);
     }
 
     [HttpPost("/category/add_recipe")]
@@ -150,6 +233,26 @@ namespace RecipeBox.Controllers
       return View("RecipeForm", thisCategory);
     }
 
+    [HttpPost("/category/{id}/recipe/add")]
+    public ActionResult AddRecipe(int id)
+    {
+      string recipeName = Request.Form["recipe-name"];
+      string instructions = Request.Form["instructions"];
+      Recipe newRecipe = new Recipe(recipeName, instructions);
+      newRecipe.Save();
+      Category thisCategory = Category.Find(id);
+      thisCategory.AddRecipeToCategoryJoinTable(newRecipe);
+
+      Dictionary<string, object> model = new Dictionary<string, object>();
+      Category selectedCategory = Category.Find(thisCategory.GetId());
+      List<Recipe> categoriesRecipes = selectedCategory.GetRecipes();
+      List<Recipe> allRecipes = Recipe.GetAll();
+      model.Add("selectedCategory", selectedCategory);
+      model.Add("categoriesRecipes", categoriesRecipes);
+      model.Add("allRecipes", allRecipes);
+      return View("CategoryDetails", model);
+    }
+
     [HttpGet("/recipe/{id}/delete")]
     public ActionResult RecipeDelete(int id)
     {
@@ -165,6 +268,50 @@ namespace RecipeBox.Controllers
       thisCategory.Delete();
       return View();
     }
+
+    [HttpGet("/recipe/{id}/update-form")]
+    public ActionResult RecipeUpdateForm(int id)
+    {
+      Recipe thisRecipe = Recipe.Find(id);
+      return View(thisRecipe);
+    }
+
+    [HttpPost("/recipe/{id}/updated-recipe-name")]
+    public ActionResult RecipeNameUpdated(int id)
+    {
+      Recipe selectedRecipe = Recipe.Find(id);
+      selectedRecipe.UpdateName(Request.Form["new-recipe-name"]);
+
+      Dictionary<string, object> model = new Dictionary<string, object>();
+      Recipe thisRecipe = Recipe.Find(selectedRecipe.GetId());
+      List<Category> allCategories = Category.GetAll();
+      List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
+      List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      model.Add("thisRecipe", thisRecipe);
+      model.Add("allCategories", allCategories);
+      model.Add("ingredientsRecipes", ingredientsRecipes);
+      model.Add("categoriesRecipes", categoriesRecipes);
+      return View("RecipeDetails", model);
+    }
+
+    [HttpPost("/recipe/{id}/updated-recipe-instructions")]
+    public ActionResult RecipeInstructionsUpdated(int id)
+    {
+      Recipe selectedRecipe = Recipe.Find(id);
+      selectedRecipe.UpdateInstructions(Request.Form["new-instructions"]);
+
+      Dictionary<string, object> model = new Dictionary<string, object>();
+      Recipe thisRecipe = Recipe.Find(selectedRecipe.GetId());
+      List<Category> allCategories = Category.GetAll();
+      List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
+      List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      model.Add("thisRecipe", thisRecipe);
+      model.Add("allCategories", allCategories);
+      model.Add("ingredientsRecipes", ingredientsRecipes);
+      model.Add("categoriesRecipes", categoriesRecipes);
+      return View("RecipeDetails", model);
+    }
+
 
     // [HttpPost ("/category-added")]
     // public ActionResult AddCategory(int id)

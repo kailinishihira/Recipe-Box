@@ -1,0 +1,21 @@
+@{
+  Layout = "_Layout";
+}
+
+<h1>Update @Model.GetName() Recipe Name</h1>
+
+<form action="/recipe/@Model.GetId()/updated-recipe-name" method="post">
+  <label for="new-recipe-name">Enter new recipe name</label>
+  <input name="new-recipe-name" type="text">
+  <button type="submit" class="btn btn-info">Update</button>
+</form>
+
+<h1>Update @Model.GetName() Instructions</h1>
+<h4>Instructions: </h4>
+<p>@Model.GetInstructions()</p>
+
+<form action="/recipe/@Model.GetId()/updated-recipe-instructions" method="post">
+  <label for="new-instructions">Enter new instructions</label>
+  <input name="new-instructions" type="text">
+  <button type="submit" class="btn btn-info">Update</button>
+</form>

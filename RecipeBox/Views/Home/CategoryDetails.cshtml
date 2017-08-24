@@ -6,6 +6,7 @@
 
 <h1>@Model["selectedCategory"].GetName() Recipes</h1>
 <p><a href="/category/@Model["selectedCategory"].GetId()/delete">Delete this category</a></p>
+<p><a href="/category/@Model["selectedCategory"].GetId()/update-form">Update this category name</a></p>
 
 @foreach(var recipe in @Model["categoriesRecipes"])
 {

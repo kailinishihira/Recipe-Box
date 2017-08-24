@@ -1,0 +1,11 @@
+@{
+  Layout = "_Layout";
+}
+
+<h1>Update @Model["ingredient"].GetName() Ingredient Name</h1>
+
+<form action="/recipe/@Model["recipe"].GetId()/ingredient/@Model["ingredient"].GetId()/updated" method="post">
+  <label for="new-ingredient-name">Enter new ingredient name</label>
+  <input name="new-ingredient-name" type="text">
+  <button type="submit" class="btn btn-info">Update</button>
+</form>

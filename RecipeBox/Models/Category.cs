@@ -160,6 +160,7 @@ namespace RecipeBox.Models
       conn.Close();
     }
 
+
     public static void DeleteAll()
     {
       MySqlConnection conn = DB.Connection();

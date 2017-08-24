@@ -1,0 +1,11 @@
+@{
+  Layout = "_Layout";
+}
+
+<h1>Update @Model.GetName() Category Name</h1>
+
+<form action="/category/@Model.GetId()/updated" method="post">
+  <label for="new-category-name">Enter new category name</label>
+  <input name="new-category-name" type="text">
+  <button type="submit" class="btn btn-info">Update</button>
+</form>
