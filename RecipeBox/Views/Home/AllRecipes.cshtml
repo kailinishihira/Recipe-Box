@@ -1,0 +1,13 @@
+@{
+  Layout = "_Layout";
+}
+
+<a href ="/" class="btn btn-info">Home</a>
+
+<h2>Recipes</h2>
+
+@foreach (var recipe in Model)
+
+{
+  <li><a href="/recipes/@recipe.GetId()">@recipe.GetName()</li>
+}

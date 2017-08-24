@@ -2,10 +2,14 @@
   Layout = "_Layout";
 }
 
+<a href ="/" class="btn btn-info">Home</a>
 
-<form action="/recipe/@recipe.GetId()" method="post">
-  <label for="recipe-name">Enter the category name</label>
-  <input name="category-name" type="text">
+<h2>Add a new recipe</h2>
+
+<form action='/category/@Model.GetId()/recipe/add' method='post'>
+  <label for="recipe-name">Recipe name</label>
+  <input name="recipe-name" type="text">
+  <label for="instructions">Instructions</label>
+  <input name="instructions" type="text">
   <button type="submit" class="btn btn-success">Add</button>
-
 </form>

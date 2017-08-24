@@ -195,6 +195,29 @@ namespace RecipeBox.Models
       _instructions = newInstructions;
     }
 
+    public void UpdateRating(int newRating)
+    {
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+
+      var cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"UPDATE recipes SET rating = @newRating WHERE id = @thisId;";
+
+      MySqlParameter searchId = new MySqlParameter();
+      searchId.ParameterName = "@thisId";
+      searchId.Value = _id;
+      cmd.Parameters.Add(searchId);
+
+      MySqlParameter rating = new MySqlParameter();
+      rating.ParameterName = "@newRating";
+      rating.Value = newRating;
+      cmd.Parameters.Add(rating);
+
+      cmd.ExecuteNonQuery();
+      conn.Close();
+      _rating = newRating;
+    }
+
     public void Delete()
     {
       MySqlConnection conn = DB.Connection();
@@ -253,7 +276,8 @@ namespace RecipeBox.Models
         conn.Open();
 
         var cmd = conn.CreateCommand() as MySqlCommand;
-        cmd.CommandText = @"SELECT categories.* FROM recipes
+        cmd.CommandText = @"SELECT categories.*
+          FROM recipes
           JOIN categories_recipes ON (recipes.id = categories_recipes.recipe_id)
           JOIN categories ON (categories.id = categories_recipes.category_id)
           WHERE recipes.id = @RecipeId;";

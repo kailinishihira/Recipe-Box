@@ -10,13 +10,14 @@ namespace RecipeBox.Tests
   {
     public IngredientTests()
     {
-        DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=recipe_box_test;";
+        DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=3306;database=recipe_box_test;";
     }
 
     public void Dispose()
     {
       Recipe.DeleteAll();
       Ingredient.DeleteAll();
+      Category.DeleteAll();
     }
 
     [TestMethod]

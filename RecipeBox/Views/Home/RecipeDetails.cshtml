@@ -1,0 +1,59 @@
+@{
+  Layout = "_Layout";
+}
+
+<a href ="/" class="btn btn-info">Home</a>
+
+<h2>@Model["thisRecipe"].GetName()</h2>
+<p><a href="/recipe/@Model["thisRecipe"].GetId()/delete">Delete recipe</a></p>
+
+<div class="row">
+  <div class="col-md-6">
+    <h4>Categories: </h4>
+    @foreach (var category in @Model["categoriesRecipes"])
+    {
+      <ul>
+        <li><a href="/categories/@category.GetId()">@category.GetName()</a></li>
+      </ul>
+    }
+  </div>
+
+  <div class="col-md-6">
+    <h4>Add a category to this recipe:</h4>
+    <form action='/recipe/add_category_to_recipe' method='post'>
+      <input id='recipe-id' name='recipe-id' type='hidden' value='@Model["thisRecipe"].GetId()'>
+      <label for='category-id'>Select a category</label>
+      <select id='category-id' name='category-id' type='text'>
+        @foreach (var category in @Model["allCategories"])
+        {
+          <option value='@category.GetId()'>@category.GetName()</option>
+        }
+      </select>
+      <button type='submit'>Add</button>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <h3>Add ingredients:</h3>
+    <form action='/recipes/@Model["thisRecipe"].GetId()/add-ingredient' method="post">
+      <label for="ingredient">Ingredient</label>
+      <input name="ingredient" type="text">
+      <button type="submit" class="btn btn-success">Add</button>
+    </form>
+
+    <h3>Ingredients:</h3>
+    @foreach (var ingredient in @Model["ingredientsRecipes"])
+    {
+      <ul>
+        <li>@ingredient.GetName()</li>
+      </ul>
+    }
+  </div>
+
+  <div class="col-md-6">
+    <h3>Instructions:</h3>
+    <p>@Model["thisRecipe"].GetInstructions()</p>
+  </div>
+</div>

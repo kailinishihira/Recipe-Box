@@ -10,12 +10,13 @@ namespace RecipeBox.Tests
   {
     public CategoryTests()
     {
-        DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=recipe_box_test;";
+        DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=3306;database=recipe_box_test;";
     }
 
     public void Dispose()
     {
       Recipe.DeleteAll();
+      Ingredient.DeleteAll();
       Category.DeleteAll();
     }
 
@@ -94,7 +95,7 @@ namespace RecipeBox.Tests
       Category testCategory1 = new Category(name1);
       testCategory1.Save();
 
-      string name2 = "Physics";
+      string name2 = "Snacks";
       Category testCategory2 = new Category(name2);
       testCategory2.Save();
 
@@ -114,10 +115,10 @@ namespace RecipeBox.Tests
       Category testCategory = new Category("Dessert");
       testCategory.Save();
 
-      Recipe testRecipe = new Recipe("Chocolate Chip Cookies", "Melt butter, mix with sugar, eggs, flour, salt, baking soda, chocolate chips. Bake for 10 minutes", 4);
+      Recipe testRecipe = new Recipe("Chocolate Chip Cookies", "Melt butter, mix with sugar, eggs, flour, salt, baking soda, chocolate chips. Bake for 10 minutes");
       testRecipe.Save();
 
-      Recipe testRecipe2 = new Recipe("Ceviche", "Put the tilapia in a medium bowl. Pour the lime juice over the fish and mix gently to combine.", 4);
+      Recipe testRecipe2 = new Recipe("Ceviche", "Put the tilapia in a medium bowl. Pour the lime juice over the fish and mix gently to combine.");
       testRecipe2.Save();
 
       //Act

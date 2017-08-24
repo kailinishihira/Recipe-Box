@@ -11,12 +11,13 @@ namespace RecipeBox.Tests
     public void Dispose()
     {
       Recipe.DeleteAll();
+      Ingredient.DeleteAll();
       Category.DeleteAll();
     }
 
     public RecipeTests()
     {
-      DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=recipe_box_test;";
+      DBConfiguration.ConnectionString = "server=localhost;user id=root;password=root;port=3306;database=recipe_box_test;";
     }
 
     [TestMethod]
@@ -86,28 +87,28 @@ namespace RecipeBox.Tests
       Assert.AreEqual(testRecipe, foundRecipe);
     }
 
-      [TestMethod]
-      public void AddCategory_AddsCategoryToJoinTable_CategoryList()
-      {
-        //Arrange
-        Recipe testRecipe = new Recipe("Chocolate Chip Cookies", "Melt butter, mix with sugar, eggs, flour, salt, baking soda, chocolate chips. Bake for 10 minutes", 4);
-        testRecipe.Save();
+    [TestMethod]
+    public void AddCategory_AddsCategoryToJoinTable_CategoryList()
+    {
+      //Arrange
+      Recipe testRecipe = new Recipe("Chocolate Chip Cookies", "Melt butter, mix with sugar, eggs, flour, salt, baking soda, chocolate chips. Bake for 10 minutes", 4);
+      testRecipe.Save();
 
-        Category testCategory1 = new Category("Dessert");
-        testCategory1.Save();
-        Category testCategory2 = new Category("Baking");
-        testCategory2.Save();
+      Category testCategory1 = new Category("Dessert");
+      testCategory1.Save();
+      Category testCategory2 = new Category("Baking");
+      testCategory2.Save();
 
-        //Act
-        testRecipe.AddCategoryToJoinTable(testCategory1);
-        testRecipe.AddCategoryToJoinTable(testCategory2);
+      //Act
+      testRecipe.AddCategoryToJoinTable(testCategory1);
+      testRecipe.AddCategoryToJoinTable(testCategory2);
 
-        List<Category> result = testRecipe.GetCategories();
-        List<Category> testList = new List<Category>{testCategory1, testCategory2};
+      List<Category> result = testRecipe.GetCategories();
+      List<Category> testList = new List<Category>{testCategory1, testCategory2};
 
-        //Assert
-        CollectionAssert.AreEqual(testList, result);
-      }
+      //Assert
+      CollectionAssert.AreEqual(testList, result);
+    }
 
     [TestMethod]
     public void Delete_DeletesRecipeAssociationsFromDatabase_RecipeList()
@@ -148,6 +149,52 @@ namespace RecipeBox.Tests
       testRecipe.AddCategoryToJoinTable(testCategory2);
       List<Category> result = testRecipe.GetCategories();
       List<Category> testList = new List<Category> {testCategory1, testCategory2};
+
+      //Assert
+      CollectionAssert.AreEqual(testList, result);
+    }
+
+    [TestMethod]
+    public void GetIngredients_ReturnsAllIngredientsRecipes_RecipeList()
+    {
+      //Arrange
+      Recipe testRecipe = new Recipe("Chocolate Chip Cookies", "Melt butter, mix with sugar, eggs, flour, salt, baking soda, chocolate chips. Bake for 10 minutes", 4);
+      testRecipe.Save();
+
+      Ingredient testIngredient1 = new Ingredient("Chocolate");
+      testIngredient1.Save();
+
+      Ingredient testIngredient2 = new Ingredient("Sugar");
+      testIngredient2.Save();
+
+      //Act
+      testRecipe.AddIngredientToJoinTable(testIngredient1);
+      testRecipe.AddIngredientToJoinTable(testIngredient2);
+      List<Ingredient> result = testRecipe.GetIngredients();
+      List<Ingredient> testList = new List<Ingredient> {testIngredient1, testIngredient2};
+
+      //Assert
+      CollectionAssert.AreEqual(testList, result);
+    }
+
+    [TestMethod]
+    public void AddIngredient_AddsIngredientToJoinTable_IngredientList()
+    {
+      //Arrange
+      Recipe testRecipe = new Recipe("Chocolate Chip Cookies", "Melt butter, mix with sugar, eggs, flour, salt, baking soda, chocolate chips. Bake for 10 minutes", 4);
+      testRecipe.Save();
+
+      Ingredient testIngredient1 = new Ingredient("Chocolate");
+      testIngredient1.Save();
+      Ingredient testIngredient2 = new Ingredient("Sugar");
+      testIngredient2.Save();
+
+      //Act
+      testRecipe.AddIngredientToJoinTable(testIngredient1);
+      testRecipe.AddIngredientToJoinTable(testIngredient2);
+
+      List<Ingredient> result = testRecipe.GetIngredients();
+      List<Ingredient> testList = new List<Ingredient>{testIngredient1, testIngredient2};
 
       //Assert
       CollectionAssert.AreEqual(testList, result);

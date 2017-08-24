@@ -1,12 +1,12 @@
 # _Recipe Box_
 
-#### _A web app for storing recipes, Aug 18, 2017_
+#### _A web app for storing recipes, 08.23.17_
 
-#### By _**Charlie Kelson**_
+#### By _**Charlie Kelson & Kaili Nishihira**_
 
 ## Description
 
-_This web app will allow a hair salon owner to add a list of stylist, and for each stylist, add recipes who see that stylist. The stylists work independently, so each client only belongs to a single stylist._
+_This web app will allow a user to add categories to recipes and rate their recipes. The user can also look recipes up by ingredients._
 
 
 ### User Story
@@ -73,4 +73,4 @@ _No known Bugs_
 
 MIT License
 
-Copyright (c) 2015 **_Charlie Kelson_**
+Copyright (c) 2015 **_Charlie Kelson & Kaili Nishihira_**
