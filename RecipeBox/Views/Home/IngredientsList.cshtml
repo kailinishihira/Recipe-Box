@@ -1,0 +1,12 @@
+@{
+  Layout = "_Layout";
+}
+
+<h2>Ingredients</h2>
+
+@foreach(var ingredient in Model)
+{
+  <ul>
+    <li><a href="/">@ingredient.GetName()</a></li>
+  </ul>
+}

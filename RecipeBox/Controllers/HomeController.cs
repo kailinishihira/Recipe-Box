@@ -54,17 +54,27 @@ namespace RecipeBox.Controllers
       List<Category> allCategories = Category.GetAll();
       List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
       List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      List<Ingredient> allIngredients = Ingredient.GetAll();
 
       model.Add("thisRecipe", thisRecipe);
       model.Add("allCategories", allCategories);
       model.Add("ingredientsRecipes", ingredientsRecipes);
       model.Add("categoriesRecipes", categoriesRecipes);
+      model.Add("allIngredients", allIngredients);
       return View(model);
     }
 
     [HttpPost("/recipes/{id}/add-ingredient")]
     public ActionResult AddIngredients(int id)
     {
+      // string ingredient = Request.Form["ingredient"];
+      // //Ingredient.Search(string) needs to return either an Ingredient object, or null
+      // Ingredient newIngredient = Ingredient.Search(ingredient);
+      // if (newIngredient = null)
+      // {
+      //   Ingredient newIngredient = new Ingredient(ingredient);
+      //   newIngredient.Save();
+      // }
       string ingredient = Request.Form["ingredient"];
       Ingredient newIngredient = new Ingredient(ingredient);
       Recipe thisRecipe = Recipe.Find(id);
@@ -75,12 +85,15 @@ namespace RecipeBox.Controllers
       List<Category> allCategories = Category.GetAll();
       List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
       List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      List<Ingredient> allIngredients = Ingredient.GetAll();
       model.Add("thisRecipe", thisRecipe);
       model.Add("allCategories", allCategories);
       model.Add("ingredientsRecipes", ingredientsRecipes);
       model.Add("categoriesRecipes", categoriesRecipes);
+      model.Add("allIngredients", allIngredients);
       return View("RecipeDetails", model);
     }
+
     [HttpGet("/recipe/{id}/ingredient/{id2}/update-form")]
     public ActionResult IngredientUpdateForm(int id, int id2)
     {
@@ -106,10 +119,12 @@ namespace RecipeBox.Controllers
       List<Category> allCategories = Category.GetAll();
       List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
       List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      List<Ingredient> allIngredients = Ingredient.GetAll();
       model.Add("thisRecipe", thisRecipe);
       model.Add("allCategories", allCategories);
       model.Add("ingredientsRecipes", ingredientsRecipes);
       model.Add("categoriesRecipes", categoriesRecipes);
+      model.Add("allIngredients", allIngredients);
       return View("RecipeDetails", model);
     }
 
@@ -124,11 +139,13 @@ namespace RecipeBox.Controllers
       List<Category> allCategories = Category.GetAll();
       List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
       List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      List<Ingredient> allIngredients = Ingredient.GetAll();
 
       model.Add("thisRecipe", thisRecipe);
       model.Add("allCategories", allCategories);
       model.Add("ingredientsRecipes", ingredientsRecipes);
       model.Add("categoriesRecipes", categoriesRecipes);
+      model.Add("allIngredients", allIngredients);
 
       return View("RecipeDetails", model);
     }
@@ -146,10 +163,12 @@ namespace RecipeBox.Controllers
         List<Category> allCategories = Category.GetAll();
         List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
         List<Category> categoriesRecipes = thisRecipe.GetCategories();
+        List<Ingredient> allIngredients = Ingredient.GetAll();
         model.Add("thisRecipe", thisRecipe);
         model.Add("allCategories", allCategories);
         model.Add("ingredientsRecipes", ingredientsRecipes);
         model.Add("categoriesRecipes", categoriesRecipes);
+        model.Add("allIngredients", allIngredients);
 
         return View("RecipeDetails", model);
       }
@@ -164,11 +183,13 @@ namespace RecipeBox.Controllers
         List<Category> allCategories = Category.GetAll();
         List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
         List<Category> categoriesRecipes = thisRecipe.GetCategories();
+        List<Ingredient> allIngredients = Ingredient.GetAll();
 
         model.Add("thisRecipe", thisRecipe);
         model.Add("allCategories", allCategories);
         model.Add("ingredientsRecipes", ingredientsRecipes);
         model.Add("categoriesRecipes", categoriesRecipes);
+        model.Add("allIngredients", allIngredients);
 
         return View("RecipeDetails", model);
       }
@@ -287,10 +308,12 @@ namespace RecipeBox.Controllers
       List<Category> allCategories = Category.GetAll();
       List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
       List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      List<Ingredient> allIngredients = Ingredient.GetAll();
       model.Add("thisRecipe", thisRecipe);
       model.Add("allCategories", allCategories);
       model.Add("ingredientsRecipes", ingredientsRecipes);
       model.Add("categoriesRecipes", categoriesRecipes);
+      model.Add("allIngredients", allIngredients);
       return View("RecipeDetails", model);
     }
 
@@ -305,13 +328,54 @@ namespace RecipeBox.Controllers
       List<Category> allCategories = Category.GetAll();
       List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
       List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      List<Ingredient> allIngredients = Ingredient.GetAll();
       model.Add("thisRecipe", thisRecipe);
       model.Add("allCategories", allCategories);
       model.Add("ingredientsRecipes", ingredientsRecipes);
       model.Add("categoriesRecipes", categoriesRecipes);
+      model.Add("allIngredients", allIngredients);
       return View("RecipeDetails", model);
     }
 
+    [HttpPost("/recipe/{id}/rating")]
+    public ActionResult RecipeRated(int id)
+    {
+      Recipe selectedRecipe = Recipe.Find(id);
+      int rating = (int.Parse(Request.Form["rating"]));
+
+      selectedRecipe.UpdateRating(rating);
+
+      return RedirectToAction("RecipeDetails");
+
+    }
+
+    [HttpGet("/ingredients/all")]
+    public ActionResult IngredientsList()
+    {
+      List<Ingredient> allIngredients = Ingredient.GetAll();
+      return View(allIngredients);
+    }
+
+    [HttpPost("/recipe/add_ingredient_to_recipe")]
+    public ActionResult SelectIngredient()
+    {
+      Recipe recipe = Recipe.Find(int.Parse(Request.Form["recipe-id"]));
+      Ingredient thisIngredient = Ingredient.Find(int.Parse(Request.Form["ingredient-id"]));
+      recipe.AddIngredientToJoinTable(thisIngredient);
+      Dictionary<string, object> model = new Dictionary<string, object>();
+      Recipe thisRecipe = Recipe.Find(recipe.GetId());
+      List<Category> allCategories = Category.GetAll();
+      List<Ingredient> ingredientsRecipes = thisRecipe.GetIngredients();
+      List<Category> categoriesRecipes = thisRecipe.GetCategories();
+      List<Ingredient> allIngredients = Ingredient.GetAll();
+      model.Add("thisRecipe", thisRecipe);
+      model.Add("allCategories", allCategories);
+      model.Add("ingredientsRecipes", ingredientsRecipes);
+      model.Add("categoriesRecipes", categoriesRecipes);
+      model.Add("allIngredients", allIngredients);
+
+      return View("RecipeDetails", model);
+    }
 
     // [HttpPost ("/category-added")]
     // public ActionResult AddCategory(int id)

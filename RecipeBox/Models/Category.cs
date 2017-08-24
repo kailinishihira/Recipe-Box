@@ -205,7 +205,8 @@ namespace RecipeBox.Models
        FROM categories
        JOIN categories_recipes ON(categories.id = categories_recipes.category_id)
        JOIN recipes ON(recipes.id = categories_recipes.recipe_id)
-       WHERE category_id = @categoryId;";
+       WHERE category_id = @categoryId
+       ORDER BY recipes.rating DESC;";
 
      MySqlParameter categoryIdParameter = new MySqlParameter();
      categoryIdParameter.ParameterName = "@categoryId";

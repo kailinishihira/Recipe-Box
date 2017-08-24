@@ -177,5 +177,24 @@ namespace RecipeBox.Tests
       CollectionAssert.AreEqual(testRecipeIngredients, resultRecipeIngredients);
     }
 
+    [Test Method]
+    public void Search_SearchAllIgredientsAndReturnIngredientIfItExists_Ingredient()
+    {
+
+      Ingredient expectedIngredient = new Ingredient ("Flour");
+
+      Ingredient expectedUserInput = new Ingredient ("Flour")
+      testIngredient.Save();
+
+      Ingredient actual = Ingredient.Search(expected);
+
+      Assert.AreEqual(expectedIngredient, actual);
+
+
+
+    }
+    }
+
+
   }
 }

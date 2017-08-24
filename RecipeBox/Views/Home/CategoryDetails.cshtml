@@ -11,7 +11,7 @@
 @foreach(var recipe in @Model["categoriesRecipes"])
 {
   <ul>
-    <li><a href="/recipes/@recipe.GetId()">@recipe.GetName()</a></li>
+    <li><a href="/recipes/@recipe.GetId()">@recipe.GetName()</a> : @recipe.GetRating() stars</li>
   </ul>
 }
 

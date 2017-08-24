@@ -90,6 +90,23 @@ namespace RecipeBox.Models
       conn.Close();
     }
 
+    // public static Ingredient Search(string ingredientInput)
+    // {
+    //   List<Ingredient> ingredientList = Ingredient.GetAll();
+    //
+    // }
+    //
+
+
+    //   loop through all ingredients by name (list) and compare to ingredientInput arguement
+    //
+    //   if ingredient[i] == ingredientInput
+    //
+    //   then return Ingredient[i].GetId
+    //
+    //   else return null
+
+
     public static Ingredient Find(int id)
     {
       MySqlConnection conn = DB.Connection();
@@ -200,6 +217,7 @@ namespace RecipeBox.Models
     {
      MySqlConnection conn = DB.Connection();
      conn.Open();
+
      var cmd = conn.CreateCommand() as MySqlCommand;
      cmd.CommandText = @"SELECT recipes.*
        FROM ingredients
@@ -230,6 +248,5 @@ namespace RecipeBox.Models
      }
      return allRecipes;
    }
-
   }
 }
